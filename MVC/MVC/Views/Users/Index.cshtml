@@ -1,0 +1,130 @@
+@model IEnumerable<UserResponse>
+
+@* Generated from Custom MVC Template. *@
+@* Model namespace using directive should be added to _ViewImports.cshtml. *@
+
+@{
+    var containerDivClass = "container-fluid"; // changed from "container" to "container-fluid" for full width
+}
+@{
+    /*
+    ViewBag and ViewData are the same collection (dictionary).
+    They carry extra data other than the model from a controller action to its view, or between views.
+    The value assigned will be shown in Views\Shared\_Layout.cshtml view's title tag of the head tag.
+    */
+    ViewData["Title"] = "User List";
+}
+
+<div class="@containerDivClass">
+    <h1>@ViewData["Title"]</h1>
+    <hr />
+</div>
+
+@if (Model is not null)
+{
+    <form asp-action="Index" autocomplete="off">
+        <div class="@containerDivClass">
+            <div class="row">
+                <div class="col-12 text-danger">
+                    @*
+                    TempData is used to carry extra data to the redirected controller action's view.
+                    *@
+                    @TempData["Message"]
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-10 text-success">
+                    @Model.Count() record(s) found.
+                </div>
+                <div class="col-2 text-end">
+                    <a asp-action="Create">Create</a>
+                </div>
+            </div>
+            <table class="table table-striped table-hover">
+                <thead class="table-secondary">
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.UserName)
+                        </th>
+                        @* Response Properties: *@
+                        <th>
+                            @Html.DisplayNameFor(model => model.PasswordR)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FullNameR)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.GenderR)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.BirthDateR)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.RegistrationDateR)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.ScoreR)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.IsOnlineR)
+                        </th>
+                        <th>
+                            @Html.Label("Status", "Status")
+                            @* DisplayNameFor may also be used. *@
+                        </th>
+                        <th>
+                            @Html.Label("Roles", "Roles")
+                            @* DisplayNameFor may also be used. *@
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+		            @foreach (var item in Model) {
+				        <tr>
+					        <td>
+						        @Html.DisplayFor(modelItem => item.UserName)
+					        </td>
+					        @* Response Properties: *@
+					        <td>
+						        @Html.DisplayFor(modelItem => item.PasswordR)
+					        </td>
+					        <td>
+						        @Html.DisplayFor(modelItem => item.FullNameR)
+					        </td>
+					        <td>
+						        @Html.DisplayFor(modelItem => item.GenderR)
+					        </td>
+					        <td>
+						        @Html.DisplayFor(modelItem => item.BirthDateR)
+					        </td>
+					        <td>
+						        @Html.DisplayFor(modelItem => item.RegistrationDateR)
+					        </td>
+					        <td>
+						        @Html.DisplayFor(modelItem => item.ScoreR)
+					        </td>
+					        <td>
+						        @Html.DisplayFor(modelItem => item.IsOnlineR)
+					        </td>
+					        @* Way 1: Displaying mapped primitive type (StatusTitleR) data for basic information. *@
+					        <td>
+						        @Html.DisplayFor(modelItem => item.StatusTitleR)
+					        </td>
+					        @* Way 1: Displaying mapped primitive type (RoleNamesR) data for basic information. *@
+					        <td>
+						        @Html.Raw(item.RoleNamesR)
+						        <!-- Raw HTML Helper is used since RoleNamesR value contains the "<br>" tag. -->
+					        </td>
+					        <td class="text-end w-25">
+						        <a asp-action="Details" asp-route-id="@item.Id">Details</a>&nbsp;|&nbsp;
+						        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>&nbsp;|&nbsp;
+						        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+					        </td>
+				        </tr>
+		            }
+                </tbody>
+            </table>
+        </div>
+    </form>
+}
