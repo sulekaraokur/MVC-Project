@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="APP/APP.csproj" />
+  <Project Path="CORE/CORE.csproj" />
+  <Project Path="MVC/MVC.csproj" />
+</Solution>
