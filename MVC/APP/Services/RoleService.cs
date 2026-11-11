@@ -36,13 +36,14 @@ namespace APP.Services
         public CommandResponse Add(RoleRequest request)
         {
             if (DbQuery().Any(roleEntity => roleEntity.Name == request.Name.Trim()))
-                return Error($"\"{request.Name}\" role exists!");
+                return Error("\"" + request.Name + "\"" + " role exists!");
             var roleEntity = new Role
             {
                 Name = request.Name.Trim()
             };
             DbAdd(roleEntity);
-            return Success(roleEntity.Id, $"\"{roleEntity.Name}\" role created successfully.");
+            return Success(roleEntity.Id, "\"" + roleEntity.Name + "\"" +
+                " role created successfully.");
         }
 
         public CommandResponse Update(RoleRequest request)
