@@ -1,0 +1,68 @@
+using CORE.Domain;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+
+namespace CORE.Services
+{
+    // Base class for CRUD database operations of an entity type.
+    public abstract class DbService<TEntity> : Service, IDisposable
+        where TEntity : Record, new()
+    {
+        private readonly DbContext _db;
+
+        protected DbService(DbContext db)
+        {
+            _db = db;
+        }
+
+        // Can be overridden for ordering, filtering or including related entities.
+        protected virtual IQueryable<TEntity> DbQuery()
+            => _db.Set<TEntity>().AsNoTracking();
+
+        protected TEntity DbSingle(int id)
+        {
+            return DbQuery().AsTracking()
+                .SingleOrDefault(entity => entity.Id == id);
+        }
+
+        protected TEntity DbSingle(Expression<Func<TEntity, bool>> predicate)
+            => DbQuery().AsTracking().SingleOrDefault(predicate);
+
+        protected virtual int DbSave() => _db.SaveChanges();
+
+        // save: false lets several operations be committed once with DbSave (Unit of Work).
+        protected void DbAdd(TEntity entity, bool save = true)
+        {
+            _db.Set<TEntity>().Add(entity);
+            if (save)
+                DbSave();
+        }
+
+        protected void DbUpdate(TEntity entity, bool save = true)
+        {
+            _db.Set<TEntity>().Update(entity);
+            if (save)
+                DbSave();
+        }
+
+        protected void DbRemove(TEntity entity, bool save = true)
+        {
+            _db.Set<TEntity>().Remove(entity);
+            if (save)
+                DbSave();
+        }
+
+        // Does not save: DbAdd, DbUpdate, DbRemove or DbSave must be called afterwards.
+        protected void DbRemove<TNavigationEntity>(List<TNavigationEntity> navigationEntities)
+            where TNavigationEntity : Record, new()
+        {
+            _db.Set<TNavigationEntity>().RemoveRange(navigationEntities);
+        }
+
+        public void Dispose()
+        {
+            _db.Dispose();
+            GC.SuppressFinalize(this);
+        }
+    }
+}
