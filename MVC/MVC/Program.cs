@@ -1,6 +1,20 @@
+using APP.Domain;
+using APP.Models;
+using APP.Services;
+using CORE.Services;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// IoC Container:
+// Db instances are injected into the service constructors' DbContext parameter.
+builder.Services.AddDbContext<DbContext, Db>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString(nameof(Db))));
+
+builder.Services.AddScoped<IService<RoleRequest, RoleResponse>, RoleService>();
+builder.Services.AddScoped<IService<StatusRequest, StatusResponse>, StatusService>();
+builder.Services.AddScoped<IService<UserRequest, UserResponse>, UserService>();
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
