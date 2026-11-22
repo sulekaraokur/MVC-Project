@@ -22,6 +22,12 @@ namespace APP.Domain
             var db = CreateDbContext(null);
 
             // Delete existing data:
+            var blogTags = db.BlogTags.ToList();
+            db.BlogTags.RemoveRange(blogTags);
+            var blogs = db.Blogs.ToList();
+            db.Blogs.RemoveRange(blogs);
+            var tags = db.Tags.ToList();
+            db.Tags.RemoveRange(tags);
             var userRoles = db.UserRoles.ToList();
             db.UserRoles.RemoveRange(userRoles);
             var roles = db.Roles.ToList();
@@ -33,6 +39,12 @@ namespace APP.Domain
 
             // Reset identity columns (for SQLite):
             // IDs will start from 1
+            db.Database.ExecuteSqlRaw("UPDATE SQLITE_SEQUENCE " +
+                "SET SEQ=0 WHERE NAME='BlogTags'");
+            db.Database.ExecuteSqlRaw("UPDATE SQLITE_SEQUENCE " +
+                "SET SEQ=0 WHERE NAME='Blogs'");
+            db.Database.ExecuteSqlRaw("UPDATE SQLITE_SEQUENCE " +
+                "SET SEQ=0 WHERE NAME='Tags'");
             db.Database.ExecuteSqlRaw("UPDATE SQLITE_SEQUENCE " +
                 "SET SEQ=0 WHERE NAME='UserRoles'");
             db.Database.ExecuteSqlRaw("UPDATE SQLITE_SEQUENCE " +
@@ -83,6 +95,44 @@ namespace APP.Domain
                 }
             });
             db.Statuses.Add(new Status { Title = "Inactive" });
+            db.SaveChanges();
+
+            // Tags:
+            db.Tags.Add(new Tag { Name = "Technology" });
+            db.Tags.Add(new Tag { Name = "Travel" });
+            db.Tags.Add(new Tag { Name = "Food" });
+            db.SaveChanges();
+
+            // Blogs with Tags:
+            db.Blogs.Add(new Blog
+            {
+                Title = "Getting Started with ASP.NET Core MVC",
+                Content = "Create the CORE, APP and MVC projects, then add the entities and services.",
+                Rating = 4.5m,
+                PublishDate = new DateTime(2026, 11, 1, 10, 0, 0),
+                IsArchived = false,
+                UserName = "admin",
+                UserId = db.Users.Single(u => u.UserName == "admin").Id,
+                BlogTags = new List<BlogTag>
+                {
+                    new BlogTag { TagId = db.Tags.Single(t => t.Name == "Technology").Id }
+                }
+            });
+            db.Blogs.Add(new Blog
+            {
+                Title = "A Weekend in Cappadocia",
+                Content = "Hot air balloons at sunrise and local dishes in the evening.",
+                Rating = 5m,
+                PublishDate = new DateTime(2026, 11, 8, 14, 30, 0),
+                IsArchived = false,
+                UserName = "user",
+                UserId = db.Users.Single(u => u.UserName == "user").Id,
+                BlogTags = new List<BlogTag>
+                {
+                    new BlogTag { TagId = db.Tags.Single(t => t.Name == "Travel").Id },
+                    new BlogTag { TagId = db.Tags.Single(t => t.Name == "Food").Id }
+                }
+            });
             db.SaveChanges();
         }
     }
