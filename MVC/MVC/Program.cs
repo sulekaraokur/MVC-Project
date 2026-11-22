@@ -14,6 +14,8 @@ builder.Services.AddDbContext<DbContext, Db>(options =>
 builder.Services.AddScoped<IService<RoleRequest, RoleResponse>, RoleService>();
 builder.Services.AddScoped<IService<StatusRequest, StatusResponse>, StatusService>();
 builder.Services.AddScoped<IService<UserRequest, UserResponse>, UserService>();
+builder.Services.AddScoped<IService<TagRequest, TagResponse>, TagService>();
+builder.Services.AddScoped<IService<BlogRequest, BlogResponse>, BlogService>();
 
 builder.Services.AddControllersWithViews();
 
